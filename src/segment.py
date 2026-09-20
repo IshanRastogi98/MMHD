@@ -22,6 +22,15 @@ def segment_video(video_path):
     output_folder = os.path.join(OUTPUT_DIR, video_name)
     os.makedirs(output_folder, exist_ok=True)
 
+    report_path = os.path.join(
+        output_folder,
+        "segmentation_report.json"
+    )
+
+    if os.path.exists(report_path):
+        print(f"Already segmented: {video_name}")
+        return
+
     print(f"\nProcessing: {filename}")
 
     start_time = time.perf_counter()
@@ -47,6 +56,7 @@ def segment_video(video_path):
             video_path,
             scenes,
             output_dir=output_folder,
+            preset="ultrafast",
             show_progress=True
         )
 

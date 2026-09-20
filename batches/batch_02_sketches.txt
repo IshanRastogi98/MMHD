@@ -1,0 +1,9 @@
+# Batch: Batch-02
+# Category: Comedy Sketches
+# Notes: Visual + speech + OCR + scene transitions
+
+# https://www.youtube.com/watch?v=... # Saturday Night Live sketch
+# https://www.youtube.com/watch?v=... # Key & Peele sketch
+# https://www.youtube.com/watch?v=... # Studio C sketch
+# https://www.youtube.com/watch?v=... # Dropout / CollegeHumor sketch
+# https://www.youtube.com/watch?v=... # Smosh sketch

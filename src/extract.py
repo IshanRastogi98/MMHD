@@ -216,13 +216,15 @@ def ocr_worker(
         "OCR worker: loading EasyOCR..."
     )
 
+    use_gpu = os.environ.get("MMHD_USE_GPU") == "1"
+
     reader = easyocr.Reader(
         ["en"],
-        gpu=False
+        gpu=use_gpu
     )
 
     print(
-        "OCR worker: ready."
+        f"OCR worker: ready (GPU={use_gpu})."
     )
 
     while True:
@@ -919,14 +921,16 @@ def extract_video_dataset(
             "Loading Whisper..."
         )
 
+        use_gpu = os.environ.get("MMHD_USE_GPU") == "1"
+
         whisper = WhisperModel(
             WHISPER_MODEL,
-            device="cpu",
-            compute_type="int8"
+            device="cuda" if use_gpu else "cpu",
+            compute_type="float16" if use_gpu else "int8"
         )
 
         print(
-            "Whisper ready."
+            f"Whisper ready (device={'cuda' if use_gpu else 'cpu'})."
         )
 
     # -----------------------------------------------------

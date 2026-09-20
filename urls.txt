@@ -1,0 +1,11 @@
+# Paste your YouTube URLs here (one URL per line)
+# Lines starting with # are comments and will be ignored
+
+# 1. Stand-up Comedy (20%)
+https://www.youtube.com/watch?v=dYp-KUK73RE
+
+# 2. Comedy Sketches (15%)
+# https://www.youtube.com/watch?v=...
+
+# 3. Late-Night Comedy (15%)
+# https://www.youtube.com/watch?v=...
