@@ -274,10 +274,11 @@ def ocr_worker(
 
 
 def start_ocr_worker():
-    request_queue = multiprocessing.Queue()
-    response_queue = multiprocessing.Queue()
+    ctx = multiprocessing.get_context("spawn")
+    request_queue = ctx.Queue()
+    response_queue = ctx.Queue()
 
-    process = multiprocessing.Process(
+    process = ctx.Process(
         target=ocr_worker,
         args=(
             request_queue,

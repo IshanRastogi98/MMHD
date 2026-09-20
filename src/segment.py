@@ -56,7 +56,7 @@ def segment_video(video_path):
             video_path,
             scenes,
             output_dir=output_folder,
-            preset="ultrafast",
+            arg_override="-map 0 -c copy",
             show_progress=True
         )
 
