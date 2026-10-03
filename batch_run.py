@@ -32,6 +32,11 @@ if sys.platform.startswith("linux") and os.environ.get("_MMHD_CUDA_CONFIGURED") 
             _env["_MMHD_CUDA_CONFIGURED"] = "1"
             os.execve(sys.executable, [sys.executable] + sys.argv, _env)
 
+# Ensure ~/.local/bin is on PATH for non-root environments (e.g. AIKosh)
+_local_bin = os.path.expanduser("~/.local/bin")
+if os.path.isdir(_local_bin) and _local_bin not in os.environ.get("PATH", "").split(":"):
+    os.environ["PATH"] = f"{_local_bin}:{os.environ.get('PATH', '')}"
+
 import json
 import time
 import csv

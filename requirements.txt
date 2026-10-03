@@ -3,3 +3,4 @@ av<19
 easyocr
 yt-dlp
 scenedetect
+imageio-ffmpeg

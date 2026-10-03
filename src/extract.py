@@ -70,6 +70,30 @@ COMMON_DUPLICATE_PHRASES = {
 # BASIC HELPERS
 # =========================================================
 
+import shutil
+
+# Ensure ~/.local/bin is on PATH for non-root environments (e.g. AIKosh)
+_local_bin = os.path.expanduser("~/.local/bin")
+if os.path.isdir(_local_bin) and _local_bin not in os.environ.get("PATH", "").split(":"):
+    os.environ["PATH"] = f"{_local_bin}:{os.environ.get('PATH', '')}"
+
+# If ffmpeg is not found on PATH, look for imageio-ffmpeg
+if shutil.which("ffmpeg") is None:
+    try:
+        import imageio_ffmpeg
+        _ff_exe = imageio_ffmpeg.get_ffmpeg_exe()
+        _ff_dir = os.path.dirname(_ff_exe)
+        _target_link = os.path.join(_ff_dir, "ffmpeg")
+        if not os.path.exists(_target_link):
+            try:
+                os.symlink(_ff_exe, _target_link)
+            except Exception:
+                shutil.copy2(_ff_exe, _target_link)
+        if _ff_dir not in os.environ.get("PATH", "").split(":"):
+            os.environ["PATH"] = f"{_ff_dir}:{os.environ.get('PATH', '')}"
+    except Exception:
+        pass
+
 def run_ffmpeg(command):
     return subprocess.run(
         command,
