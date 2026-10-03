@@ -78,6 +78,7 @@ Generated videos, clips, extracted modalities, and other large local data should
 The main pipeline dependencies include:
 
     faster-whisper==1.2.1
+    av<19
     easyocr
     yt-dlp
     scenedetect

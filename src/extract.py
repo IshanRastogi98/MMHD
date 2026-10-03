@@ -5,6 +5,24 @@ import re
 import subprocess
 import time
 
+# Compatibility patch for PyAV 19+ (where metadata_errors was removed from av.open)
+try:
+    import av
+    _orig_av_open = av.open
+    def _compat_av_open(*args, **kwargs):
+        try:
+            return _orig_av_open(*args, **kwargs)
+        except TypeError as e:
+            err_msg = str(e)
+            if "metadata_errors" in err_msg or "metadata_encoding" in err_msg:
+                kwargs.pop("metadata_errors", None)
+                kwargs.pop("metadata_encoding", None)
+                return _orig_av_open(*args, **kwargs)
+            raise
+    av.open = _compat_av_open
+except Exception:
+    pass
+
 from faster_whisper import WhisperModel
 
 
@@ -743,6 +761,16 @@ def candidate_matches_record(
     record,
     candidate
 ):
+    modalities = record.get(
+        "modalities",
+        {}
+    )
+
+    # Reprocess records that previously encountered extraction failures
+    for mod in modalities.values():
+        if isinstance(mod, dict) and mod.get("status") == "failed":
+            return False
+
     timing = record.get(
         "timing",
         {}
@@ -984,7 +1012,7 @@ def extract_video_dataset(
                     continue
 
                 print(
-                    f"Stale record detected for "
+                    f"Stale or previously failed record detected for "
                     f"{sample_id}. Reprocessing."
                 )
 
