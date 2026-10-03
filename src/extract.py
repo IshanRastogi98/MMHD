@@ -23,6 +23,29 @@ try:
 except Exception:
     pass
 
+# Preload CUDA 12 libraries (libcublas.so.12, libcudnn) if available via pip packages in Linux
+import sys
+if sys.platform.startswith("linux"):
+    try:
+        import ctypes
+        import glob
+        _cuda_dirs = []
+        for _pkg in ["nvidia.cublas.lib", "nvidia.cudnn.lib"]:
+            try:
+                _mod = __import__(_pkg, fromlist=["__file__"])
+                _cuda_dirs.append(os.path.dirname(_mod.__file__))
+            except Exception:
+                pass
+        for _cd in _cuda_dirs:
+            _so_files = sorted(glob.glob(os.path.join(_cd, "*.so*")), key=lambda x: ("cublasLt" not in x, x))
+            for _so in _so_files:
+                try:
+                    ctypes.CDLL(_so, mode=ctypes.RTLD_GLOBAL)
+                except Exception:
+                    pass
+    except Exception:
+        pass
+
 from faster_whisper import WhisperModel
 
 

@@ -1,5 +1,37 @@
 import os
 import sys
+
+# Configure CUDA library path (libcublas.so.12 / libcudnn) on Linux for CTranslate2 / faster-whisper
+if sys.platform.startswith("linux") and os.environ.get("_MMHD_CUDA_CONFIGURED") != "1":
+    _cuda_dirs = []
+    for _pkg in ["nvidia.cublas.lib", "nvidia.cudnn.lib"]:
+        try:
+            _mod = __import__(_pkg, fromlist=["__file__"])
+            _cuda_dirs.append(os.path.dirname(_mod.__file__))
+        except Exception:
+            pass
+    try:
+        import site
+        for _sp in site.getsitepackages():
+            _nvidia_dir = os.path.join(_sp, "nvidia")
+            if os.path.isdir(_nvidia_dir):
+                for _child in os.listdir(_nvidia_dir):
+                    _lib_p = os.path.join(_nvidia_dir, _child, "lib")
+                    if os.path.isdir(_lib_p) and _lib_p not in _cuda_dirs:
+                        _cuda_dirs.append(_lib_p)
+    except Exception:
+        pass
+
+    if _cuda_dirs:
+        _cur_ld = os.environ.get("LD_LIBRARY_PATH", "")
+        _missing = [d for d in _cuda_dirs if d not in _cur_ld.split(":")]
+        if _missing:
+            _new_ld = ":".join(_missing + ([_cur_ld] if _cur_ld else []))
+            _env = os.environ.copy()
+            _env["LD_LIBRARY_PATH"] = _new_ld
+            _env["_MMHD_CUDA_CONFIGURED"] = "1"
+            os.execve(sys.executable, [sys.executable] + sys.argv, _env)
+
 import json
 import time
 import csv
