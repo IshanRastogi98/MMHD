@@ -1,6 +1,6 @@
 faster-whisper==1.2.1
 av<19
 easyocr
-yt-dlp
+yt-dlp[default]
 scenedetect
 imageio-ffmpeg

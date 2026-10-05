@@ -12,6 +12,8 @@ __pycache__/
 .env
 .venv/
 venv/
+cookies.txt
+*.cookies
 
 # Old/generated files
 dataset_clips/
